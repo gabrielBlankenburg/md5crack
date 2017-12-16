@@ -6,10 +6,9 @@ import getopt
 
 def dictionaryAttack(known, words, hash):
 	# Tries the list of known hashes
-	for i in known:
-		if i == hash:
-			print hash + ' = ' + known[i]
-			return known, words
+	if hash in known:
+		print hash + ' = ' + known[hash]
+		return known, words
 
 	# Go through a copy of words so won't have any problem removing its indexes
 	for i in words[:]:
