@@ -26,10 +26,12 @@ def dictionaryAttack(known, words, hash):
 	print 'Could not crack this hash. Try another dictionary'
 	return known, words
 
-
-
-# {hash : senha}
-		 
+def createListFromFile(file_name):
+	file = open(file_name, 'r')
+	content = file.read()
+	list = content.splitlines()
+	file.close()
+	return list
 
 
 def main(argv):
@@ -63,10 +65,7 @@ def main(argv):
 
 	# The hashes from a file or command line
 	if arg_file_hashes != "":
-		file_hashes = open(arg_file_hashes, 'r')
-		hash_content = file_hashes.read()
-		hash_list = hash_content.splitlines()
-		file_hashes.close()
+		hash_list = createListFromFile(arg_file_hashes)
 	elif arg_hash != "":
 		hash_list = [arg_hash]
 	else:
@@ -75,10 +74,7 @@ def main(argv):
 
 	# The dictionary
 	if arg_dictionary_file != "":
-		file_dictionary = open(arg_dictionary_file, 'r')
-		dictionary_content = file_dictionary.read()
-		dictionary_list = dictionary_content.splitlines()
-		file_dictionary.close()
+		dictionary_list = createListFromFile(arg_dictionary_file)
 	elif arg_dictionary != "":
 		dictionary_list = list(arg_dictionary)
 	else:
