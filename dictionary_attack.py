@@ -1,5 +1,8 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import hashlib
+import sys
+import getopt
 
 def dictionaryAttack(known, words, hash):
 	# Tries the list of known hashes
@@ -30,15 +33,35 @@ def dictionaryAttack(known, words, hash):
 		 
 
 
-def main():
-	# hash_list = open('senhas1.txt', 'r')
-	# dictionary = open(u'C:\\Users\\Roberto\\Downloads\\10-million-combos\\wordlist.txt', 'r')
-	file_hashes = open('crypted.txt', 'r')
+def main(argv):
+	arg_file_hashes = ""
+	arg_dictionary_file = ""
+	arg_output_file = ""
+	# Check the arguments
+	try:
+		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","fout="])
+	except getopt.GetoptError:
+		print 'test.py --fhashes <file_with_hashes> --fdic <dictionary_file> --fout <output_file>'
+		sys.exit()
+
+	# Go through the options
+	for opt, arg in opts:
+		if opt == '-h':
+			'test.py --fhashes <file_with_hashes> --fdic <dictionary_file> --fout <output_file>'
+			sys.exit()
+		elif opt in ("--fhashes"):
+			arg_file_hashes = arg
+		elif opt in ("--fdic"):
+			arg_dictionary_file = arg
+		elif opt in ("--fout"):
+			arg_output_file = arg
+
+	file_hashes = open(arg_file_hashes, 'r')
 	hash_content = file_hashes.read()
 	hash_list = hash_content.splitlines()
 	file_hashes.close()
 
-	file_dictionary = open('dic.txt', 'r')
+	file_dictionary = open(arg_dictionary_file, 'r')
 	dictionary_content = file_dictionary.read()
 	dictionary_list = dictionary_content.splitlines()
 	file_dictionary.close()
@@ -46,12 +69,9 @@ def main():
 
 	known = {}
 	words = list(dictionary_list)
-	print dictionary_list
-	for i in hash_list:
-		known, words = dictionaryAttack(known, words, i)
-	print known
-	print words
-	print dictionary_list
+
+	for hash in hash_list:
+		known, words = dictionaryAttack(known, words, hash)
 
 if __name__ == '__main__':
-	main()
+	main(sys.argv[1:])
