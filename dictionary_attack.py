@@ -7,7 +7,7 @@ import getopt
 def dictionaryAttack(known, words, hash):
 	# Tries the list of known hashes
 	if hash in known:
-		print hash + ' = ' + known[hash]
+		print hash + ' = ' + known[hash].decode('utf8')
 		return known, words
 
 	# Go through a copy of words so won't have any problem removing its indexes
@@ -20,10 +20,10 @@ def dictionaryAttack(known, words, hash):
 
 		# Compares the hash created with the word and the hash to find
 		if attempt == hash:
-			print hash + ' = ' + i
+			print hash + ' = ' + i.decode('utf8')
 			return known, words
 
-	print 'Could not crack this hash. Try another dictionary file'
+	print 'Could not crack this hash. Try another dictionary'
 	return known, words
 
 
