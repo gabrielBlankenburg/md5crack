@@ -4,10 +4,10 @@ import hashlib
 import sys
 import getopt
 
-def dictionaryAttack(known, words, hash):
+def dictionaryAttack(known, words, current_hash):
 	# Tries the list of known hashes
-	if hash in known:
-		print hash + ':' + known[hash].decode('utf8')
+	if current_hash in known:
+		print current_hash + ':' + known[current_hash].decode('utf8')
 		return known, words
 
 	# Go through a copy of words so won't have any problem removing its indexes
@@ -19,20 +19,23 @@ def dictionaryAttack(known, words, hash):
 		words.remove(i)
 
 		# Compares the hash created with the word and the hash to find
-		if attempt == hash:
-			print hash + ':' + i.decode('utf8')
+		if attempt == current_hash:
+			print current_hash + ':' + i.decode('utf8')
 			return known, words
 
-	print 'Could not crack this hash. Try another dictionary'
+	print 'Could not crack the hash ' + current_hash + ' . Try another dictionary'
 	return known, words
 
 def createListFromFile(file_name):
 	file = open(file_name, 'r')
 	content = file.read()
-	list = content.splitlines()
+	list_content = content.splitlines()
 	file.close()
-	return list
+	return list_content
 
+def removeDuplicate(list_elements):
+	aux = set(list_elements)
+	return list(aux)
 
 def main(argv):
 	arg_file_hashes = ""
@@ -40,9 +43,11 @@ def main(argv):
 	arg_output_file = ""
 	arg_hash = ""
 	arg_dictionary = ""
+	remove_duplicate = False
 	# Check the arguments
 	try:
-		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","foutpass=", "hashes=", "dictionary=", "foutpass="])
+		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","foutpass=", "hashes=", "dictionary=", "foutpass=", \
+												"rmDuplicate"])
 	except getopt.GetoptError:
 		print 'Invalid syntax. Type dictionary_attack.py -h for help'
 		sys.exit()
@@ -62,6 +67,8 @@ def main(argv):
 			arg_hash = arg
 		elif opt in ("--dictionary"):
 			arg_dictionary = arg
+		elif opt in ("--rmDuplicate"):
+			remove_duplicate = True
 
 	hash_list = []
 	dictionary_list = []
@@ -86,16 +93,21 @@ def main(argv):
 		aux = arg_dictionary.split(' ')
 		dictionary_list = dictionary_list + aux
 
+	# removes de duplicated if passed the argument rmDuplicate
+	if remove_duplicate:
+		hash_list = removeDuplicate(hash_list)
+		dictionary_list = removeDuplicate(dictionary_list)
+
 	# Case the dictionary list is empty
 	if dictionary_list == []:
 		print "No dictionary is inserted. Type dictionary_attack.py -h for help."
 
 	known = {}
-	words = dictionary_list
+	words = list(dictionary_list)
 
 	# Do the attack
-	for hash in hash_list:
-		known, words = dictionaryAttack(known, words, hash)
+	for h in hash_list:
+		known, words = dictionaryAttack(known, words, h)
 
 	if arg_output_file != "":
 		output_string = ''
