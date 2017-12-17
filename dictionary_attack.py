@@ -51,8 +51,8 @@ def main(argv):
 	remove_any_message = False
 	# Check the arguments
 	try:
-		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","foutpass=", "hashes=", "dictionary=", "foutpass=", \
-												"rmDuplicate", "rmNotFoundMsg", "rmAnyMsg"])
+		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","foutpass=", "hashes=", "dictionary=", "rmduplicate", \
+									"rmnotfoundmsg", "rmanymsg"])
 	except getopt.GetoptError:
 		print 'Invalid syntax. Type dictionary_attack.py -h for help'
 		sys.exit()
@@ -60,7 +60,15 @@ def main(argv):
 	# Go through the options
 	for opt, arg in opts:
 		if opt == '-h':
-			'dictionary_attack.py --fhashes <file_with_hashes> --fdic <dictionary_file> --fout <output_file>'
+			print '`-h` Shows the help. \n\n' \
+					+ '--fhashes <path of a file containing hashes> Opens a specified file with hashes separeted by line break.\n\n' \
+					+ '--fdic <path of a file containing the wordlist> Opens a specified file with words that later the script is going to use to try to guess the passwords.\n\n' \
+					+ '--foutpass <path to the output file> Choose a file to save the hashes and passwords found in the pattern `hash:password`. Notice that if the file does not exist it will create one and if the file already exists it will OVERWRITE it. This argument is optional.\n\n' \
+					+ '--hashes "<a hash> <another hash>" Inputs the hashes via command line. The hashes must be between a double quotation marks and separeted by spaces.\n\n' \
+					+ '--dictionary "<a word> <another word>" Input the wordlist via command line. The words must be between a double quotation marks and separeted by spaces. Notice that if the word contain space, please put it inside a .txt file and use the `--fdic` parameter.\n\n' \
+					+ '--rmduplicate This may improve the speed of the script by removing duplicated values in the hashes and words.\n\n' \
+					+ '--rmnotfoundmsg This prevents showing messages when not founding the passwords.\n\n' \
+					+ '--rmanymessage This prevents showing any messages related to found passwords at all.'
 			sys.exit()
 		elif opt in ("--fhashes"):
 			arg_file_hashes = arg
@@ -72,11 +80,11 @@ def main(argv):
 			arg_hash = arg
 		elif opt in ("--dictionary"):
 			arg_dictionary = arg
-		elif opt in ("--rmDuplicate"):
+		elif opt in ("--rmduplicate"):
 			remove_duplicate = True
-		elif opt in ("--rmNotFoundMsg"):
+		elif opt in ("--rmnotfoundmsg"):
 			remove_not_found_message = True
-		elif opt in ("--rmAnyMsg"):
+		elif opt in ("--rmanymsg"):
 			remove_any_message = True
 
 	hash_list = []
