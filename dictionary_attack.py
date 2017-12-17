@@ -7,7 +7,7 @@ import getopt
 def dictionaryAttack(known, words, hash):
 	# Tries the list of known hashes
 	if hash in known:
-		print hash + ' = ' + known[hash].decode('utf8')
+		print hash + ':' + known[hash].decode('utf8')
 		return known, words
 
 	# Go through a copy of words so won't have any problem removing its indexes
@@ -20,7 +20,7 @@ def dictionaryAttack(known, words, hash):
 
 		# Compares the hash created with the word and the hash to find
 		if attempt == hash:
-			print hash + ' = ' + i.decode('utf8')
+			print hash + ':' + i.decode('utf8')
 			return known, words
 
 	print 'Could not crack this hash. Try another dictionary'
@@ -42,9 +42,9 @@ def main(argv):
 	arg_dictionary = ""
 	# Check the arguments
 	try:
-		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","fout="])
+		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","foutpass=", "hashes=", "dictionary=", "foutpass="])
 	except getopt.GetoptError:
-		print 'dictionary_attack.py --fhashes <file_with_hashes> --fdic <dictionary_file> --fout <output_file>'
+		print 'Invalid syntax. Type dictionary_attack.py -h for help'
 		sys.exit()
 
 	# Go through the options
@@ -56,37 +56,54 @@ def main(argv):
 			arg_file_hashes = arg
 		elif opt in ("--fdic"):
 			arg_dictionary_file = arg
-		elif opt in ("--fout"):
+		elif opt in ("--foutpass"):
 			arg_output_file = arg
-		elif opt in ("--hash"):
+		elif opt in ("--hashes"):
 			arg_hash = arg
 		elif opt in ("--dictionary"):
 			arg_dictionary = arg
 
-	# The hashes from a file or command line
+	hash_list = []
+	dictionary_list = []
+
+	# The hashes
 	if arg_file_hashes != "":
 		hash_list = createListFromFile(arg_file_hashes)
-	elif arg_hash != "":
-		hash_list = [arg_hash]
-	else:
-		print "You should insert a hash! type python dictionary_attack.py -h to help"
-		exit()
+	if arg_hash != "":
+		# Separetes the words by space and join to the other list
+		aux = arg_hash.split(' ')
+		hash_list = hash_list + aux
+
+	# Case the hash list is empty
+	if hash_list == []:
+		print "No hash is inserted. Type dictionary_attack.py -h for help."
 
 	# The dictionary
 	if arg_dictionary_file != "":
 		dictionary_list = createListFromFile(arg_dictionary_file)
-	elif arg_dictionary != "":
-		dictionary_list = list(arg_dictionary)
-	else:
-		print "You should insert a hash! type python dictionary_attack.py -h to help"
-		exit()
+	if arg_dictionary != "":
+		# Separetes the words by space and join to the other list
+		aux = arg_dictionary.split(' ')
+		dictionary_list = dictionary_list + aux
 
+	# Case the dictionary list is empty
+	if dictionary_list == []:
+		print "No dictionary is inserted. Type dictionary_attack.py -h for help."
 
 	known = {}
-	words = list(dictionary_list)
+	words = dictionary_list
 
+	# Do the attack
 	for hash in hash_list:
 		known, words = dictionaryAttack(known, words, hash)
+
+	if arg_output_file != "":
+		output_string = ''
+		for i in known:
+			if i in hash_list:
+				output_string = output_string + i + ':' + known[i] + '\n'
+		output_file = open(arg_output_file)
+
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
