@@ -29,7 +29,7 @@ The usage is very simple. All you need is to have some hashes and a dictionary. 
 
 `./dictionary_attack.py --fhashes hashes.txt --fdic dictionary.txt --rmnotfoundmsg` It will not print when it does not find a password.
 
-``./dictionary_attack.py --fhashes hashes.txt --fdic dictionary.txt` --rmanymessage` It will not print any message related to found passwords at all.
+`./dictionary_attack.py --fhashes hashes.txt --fdic dictionary.txt --rmanymessage` It will not print any message related to found passwords at all.
 
 #### Hints
 If you are using special characteres be aware that they won't be properly written in an output file. In this case you can use the bash command `>` to write the output in a file instead using the `--foutpass` like `./dictionary_attack.py --fhashes hashes.txt --fdic dictionary.txt > output.txt`. Notice that doing so you should not use the parameter `--rmanymessage` once it will not print anything about found passwords.
