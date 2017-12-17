@@ -4,10 +4,11 @@ import hashlib
 import sys
 import getopt
 
-def dictionaryAttack(known, words, current_hash):
+def dictionaryAttack(known, words, current_hash, remove_not_found_message, remove_any_message):
 	# Tries the list of known hashes
 	if current_hash in known:
-		print current_hash + ':' + known[current_hash].decode('utf8')
+		if not remove_any_message:
+			print current_hash + ':' + known[current_hash].decode('utf8')
 		return known, words
 
 	# Go through a copy of words so won't have any problem removing its indexes
@@ -20,10 +21,12 @@ def dictionaryAttack(known, words, current_hash):
 
 		# Compares the hash created with the word and the hash to find
 		if attempt == current_hash:
-			print current_hash + ':' + i.decode('utf8')
+			if not remove_any_message:
+				print current_hash + ':' + i.decode('utf8')
 			return known, words
 
-	print 'Could not crack the hash ' + current_hash + ' . Try another dictionary'
+	if not remove_any_message and not remove_not_found_message:
+		print 'Could not crack the hash ' + current_hash + ' . Try another dictionary'
 	return known, words
 
 def createListFromFile(file_name):
@@ -44,10 +47,12 @@ def main(argv):
 	arg_hash = ""
 	arg_dictionary = ""
 	remove_duplicate = False
+	remove_not_found_message = False
+	remove_any_message = False
 	# Check the arguments
 	try:
 		opts, args = getopt.getopt(argv,"h",["fhashes=","fdic=","foutpass=", "hashes=", "dictionary=", "foutpass=", \
-												"rmDuplicate"])
+												"rmDuplicate", "rmNotFoundMsg", "rmAnyMsg"])
 	except getopt.GetoptError:
 		print 'Invalid syntax. Type dictionary_attack.py -h for help'
 		sys.exit()
@@ -69,6 +74,10 @@ def main(argv):
 			arg_dictionary = arg
 		elif opt in ("--rmDuplicate"):
 			remove_duplicate = True
+		elif opt in ("--rmNotFoundMsg"):
+			remove_not_found_message = True
+		elif opt in ("--rmAnyMsg"):
+			remove_any_message = True
 
 	hash_list = []
 	dictionary_list = []
@@ -93,21 +102,22 @@ def main(argv):
 		aux = arg_dictionary.split(' ')
 		dictionary_list = dictionary_list + aux
 
-	# removes de duplicated if passed the argument rmDuplicate
-	if remove_duplicate:
-		hash_list = removeDuplicate(hash_list)
-		dictionary_list = removeDuplicate(dictionary_list)
-
 	# Case the dictionary list is empty
 	if dictionary_list == []:
 		print "No dictionary is inserted. Type dictionary_attack.py -h for help."
+		exit()
+
+	# Removes de duplicated if passed the argument rmDuplicate
+	if remove_duplicate:
+		hash_list = removeDuplicate(hash_list)
+		dictionary_list = removeDuplicate(dictionary_list)
 
 	known = {}
 	words = list(dictionary_list)
 
 	# Do the attack
 	for h in hash_list:
-		known, words = dictionaryAttack(known, words, h)
+		known, words = dictionaryAttack(known, words, h, remove_not_found_message, remove_any_message)
 
 	if arg_output_file != "":
 		output_string = ''
