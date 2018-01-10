@@ -11,18 +11,25 @@ The usage is very simple. All you need is to have some hashes and a dictionary. 
 
 #### Commands
 `-h` Shows the help.
+
 `--fhashes <path of a file containing hashes>` Opens a specified file with hashes separeted by line break.
+	
 `--fdic <path of a file containing the wordlist>` Opens a specified file with words that later the script is going to use to try to guess the passwords.
+	
 `--foutpass <path to the output file>` Choose a file to save the hashes and passwords found in the pattern `hash:password`. Notice that if the file does not exist it will create one and if the file already exists it will OVERWRITE it. This argument is optional.
+	
 `--hashes "<a hash> <another hash>"` Inputs the hashes via command line. The hashes must be between a double quotation marks and separeted by spaces.
+	
 `--dictionary "<a word> <another word>"` Input the wordlist via command line. The words must be between a double quotation marks and separeted by spaces. Notice that if the word contain space, please put it inside a .txt file and use the `--fdic` parameter.
+	
 `--rmduplicate` This may improve the speed of the script by removing duplicated values in the hashes and words.
+
 `--rmnotfoundmsg` This prevents showing messages when not founding the passwords.
+
 `--rmanymessage` This prevents showing any messages related to found passwords at all.
 
 ##### Examples Usage
 `./dictionary_attack.py --fhashes hashes.txt --fdic dictionary.txt` It will try to guess the hashes from the file hashes.txt with the words of the dictionary.txt .
-
 `./dictionary_attack.py --fhashes hashes.txt --dic dictionary.txt --hashes "202cb962ac59075b964b07152d234b70" --dic "123 abc" --foutpass output.txt` It does the same of the previous example plus add a inline hash and dic. It also chooses a output file that will write the passwords that contain the hashes.
 
 `./dictionary_attack.py --fhashes hashes.txt --fdic "foo bar baz foo foo" --rmduplicate` It will consider only once the *foo* value. Notice that if the file hashes contains repeated words it will consider once too.
